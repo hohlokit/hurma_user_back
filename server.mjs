@@ -28,4 +28,8 @@ app.use(
   }))
 )
 
+app.use('*', (_, res) => {
+  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+})
+
 console.log(`Running a GraphQL API server at http://localhost:${PORT}/api`)
