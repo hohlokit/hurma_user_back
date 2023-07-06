@@ -45,7 +45,7 @@ export default async ({
       attachments,
     })
 
-    console.log(result)
+    console.log(4, result)
     return result
   } catch (error) {
     console.log(error)
