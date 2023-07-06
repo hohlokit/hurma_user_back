@@ -1,11 +1,16 @@
 import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
 import dotenv from 'dotenv'
+import { fileURLToPath } from 'url'
+import path from 'path'
 
 import { connectDB } from './src/db/connectDb.mjs'
 import schema from './src/gql/index.mjs'
 import { verifyToken } from './src/mw/verifyToken.mjs'
 import updateBalance from './src/cron/update-balance.mjs'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 dotenv.config()
 
@@ -27,6 +32,7 @@ app.use(
     context: { user: req.user },
   }))
 )
+
 
 app.use('*', (_, res) => {
   res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
