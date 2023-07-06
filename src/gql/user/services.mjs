@@ -34,16 +34,23 @@ export const signUp = async (_, { email, firstName, lastName, birthday }) => {
   return { user, accessToken }
 }
 export const requestCode = async (_, { email }) => {
+  console.log(1)
   if (!validateEmail(email)) throw new Error('Provided invalid email')
+  console.log(2)
 
   const user = await Users.findOne({ email })
+  console.log(3)
   if (!user || user?.status !== 'active')
     throw new Error('Cannot find user with provided email.')
+  console.log(4)
 
   if (user) {
+    console.log(5)
     const loginCode = Math.floor(100000 + Math.random() * 900000)
+    console.log(6)
     await Users.updateOne({ email }, { loginCode })
-    await sendMail({
+    console.log(7)
+    const result = await sendMail({
       to: [email],
       subject: 'Your login code',
       templateId: 'login',
@@ -51,9 +58,12 @@ export const requestCode = async (_, { email }) => {
         loginCode,
       },
     })
+    console.log(result)
+    console.log(8)
     return `Email with code was sent to ${email}.`
   }
 
+  console.log(9)
   throw new Error('Unknown error')
 }
 export const login = async (_, { email, loginCode }) => {
