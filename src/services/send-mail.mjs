@@ -10,10 +10,9 @@ export default async ({
 }) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      // host: 'smtp.gmail.com',
-      // port: 465,
-      // secure: true,
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD,
@@ -36,7 +35,6 @@ export default async ({
 
     const recipients = to.join(', ')
 
-    console.log(3)
     const result = await transporter.sendMail({
       from: process.env.EMAIL,
       to: recipients,
@@ -46,7 +44,6 @@ export default async ({
       attachments,
     })
 
-    console.log(4, result)
     return result
   } catch (error) {
     console.log(error)
