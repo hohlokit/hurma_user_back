@@ -21,7 +21,7 @@
   "version": "1.0.0",
   "main": "server.mjs",
   "scripts": {
-    "start": "node server.js",
+    "start": "node server.mjs",
     "start:dev": "nodemon server.mjs"
   },
   "author": "",
