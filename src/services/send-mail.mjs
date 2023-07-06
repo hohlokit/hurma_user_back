@@ -10,11 +10,11 @@ export default async ({
 }) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
+      service: 'Gmail',
+      // host: 'smtp.gmail.com',
+      // port: 465,
+      // secure: true,
       auth: {
-        type: 'login',
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD,
       },
