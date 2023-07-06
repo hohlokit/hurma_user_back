@@ -9,7 +9,6 @@ export default async ({
   templateProps = {},
 }) => {
   try {
-    console.log(1)
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
@@ -21,7 +20,6 @@ export default async ({
       },
     })
 
-    console.log(2)
     transporter.use(
       'compile',
       hbs({
@@ -36,10 +34,9 @@ export default async ({
       })
     )
 
-    console.log(3)
     const recipients = to.join(', ')
 
-    const result = transporter.sendMail({
+    const result = await transporter.sendMail({
       from: process.env.EMAIL,
       to: recipients,
       subject,
@@ -48,7 +45,7 @@ export default async ({
       attachments,
     })
 
-    console.log(4, result)
+    console.log(result)
     return result
   } catch (error) {
     console.log(error)
