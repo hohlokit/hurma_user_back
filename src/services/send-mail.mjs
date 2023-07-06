@@ -36,6 +36,7 @@ export default async ({
 
     const recipients = to.join(', ')
 
+    console.log(3)
     const result = await transporter.sendMail({
       from: process.env.EMAIL,
       to: recipients,
