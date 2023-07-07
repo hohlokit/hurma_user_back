@@ -47,14 +47,21 @@ export const create = async (
   return request
 }
 
-export const getRequests = async (_, { limit = 10, offset = 0 }, { user }) => {
+export const getRequests = async (
+  _,
+  { limit = 10, offset = 0, type = '' },
+  { user }
+) => {
   if (!user || user?.status !== 'active')
     throw new Error('Authentication required')
 
   const client = await Users.findOne({ id: user.id })
   if (!client) throw new Error('Cannot find user with provided id')
 
-  const requests = await Requests.find({ user: client._id })
+  const query = { user: client._id }
+  if (type) query.type = type
+  
+  const requests = await Requests.find(query)
     .sort({ _id: -1 })
     .skip(limit * offset)
     .limit(limit)

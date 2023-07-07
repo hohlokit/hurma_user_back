@@ -15,7 +15,7 @@ export default {
         name: 'offset',
         type: GraphQLInt,
       },
-      userId: {
+      type: {
         name: 'type',
         type: GraphQLString,
       },
