@@ -112,6 +112,7 @@ export const getAbsentByDate = async (
       $gte: date,
     },
   })
+    .sort({ _id: -1 })
     .skip(limit * offset)
     .limit(limit)
     .populate('user')

@@ -8,7 +8,8 @@ export const create = async (
   { files, startDate, endDate, comment, type },
   { user }
 ) => {
-  if (!user || user?.status !== 'active') throw new Error('Authentication required')
+  if (!user || user?.status !== 'active')
+    throw new Error('Authentication required')
   if (!startDate || !endDate)
     throw new Error('Provide both of start and end dates')
   if (!type || !Object.values(requestTypes).includes(type))
@@ -46,17 +47,15 @@ export const create = async (
   return request
 }
 
-export const getRequests = async (
-  _,
-  { userId, limit = 10, offset = 0 },
-  { user }
-) => {
-  if (!user || user?.status !== 'active') throw new Error('Authentication required')
+export const getRequests = async (_, { limit = 10, offset = 0 }, { user }) => {
+  if (!user || user?.status !== 'active')
+    throw new Error('Authentication required')
 
-  const client = await Users.findOne({ id: userId })
+  const client = await Users.findOne({ id: user.id })
   if (!client) throw new Error('Cannot find user with provided id')
 
   const requests = await Requests.find({ user: client._id })
+    .sort({ _id: -1 })
     .skip(limit * offset)
     .limit(limit)
     .populate('user')
