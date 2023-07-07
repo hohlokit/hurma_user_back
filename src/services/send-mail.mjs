@@ -13,6 +13,7 @@ export default async ({
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,
+      debug: true,
       auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD,
