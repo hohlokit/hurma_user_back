@@ -33,9 +33,10 @@ app.use(
   }))
 )
 
+app.use(express.static("client/build"));
 
 app.use('*', (_, res) => {
-  res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+  res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
 })
 
 console.log(`Running a GraphQL API server at http://localhost:${PORT}/api`)
