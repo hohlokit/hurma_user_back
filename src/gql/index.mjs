@@ -16,6 +16,7 @@ const RootQuery = new GraphQLObjectType({
     requests: requestQueries.getRequests,
     absentByDate: userQueries.getAbsentByDate,
     events: eventQueries.getEvents,
+    celebrations: userQueries.celebrations,
   }),
 })
 

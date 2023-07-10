@@ -123,3 +123,47 @@ export const getAbsentByDate = async (
     return { type, firstName, lastName, id }
   })
 }
+
+export const getCelebrations = async (_, {}, { user }) => {
+  if (!user) throw new Error('Authentication required')
+
+  const today = new Date()
+  const pipe1 = {
+    $project: {
+      _id: 0,
+      id: 1,
+      firstName: 1,
+      lastName: 1,
+      surname: 1,
+      birthday: 1,
+      todayDayOfYear: { $dayOfYear: today },
+      dayOfYear: { $dayOfYear: '$birthday' },
+    },
+  }
+  const pipe2 = {
+    $project: {
+      id: 1,
+      firstName: 1,
+      lastName: 1,
+      surname: 1,
+      birthday: 1,
+      daysTillBirthday: {
+        $subtract: [
+          {
+            $add: [
+              '$dayOfYear',
+              { $cond: [{ $lt: ['$dayOfYear', '$todayDayOfYear'] }, 365, 0] },
+            ],
+          },
+          '$todayDayOfYear',
+        ],
+      },
+    },
+  }
+
+  const sort = { $sort: { daysTillBirthday: 1 } }
+  const limit = { $limit: 5 }
+  const celebrations = await Users.aggregate([pipe1, pipe2, sort, limit])
+
+  return celebrations
+}
