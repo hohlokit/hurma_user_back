@@ -8,6 +8,9 @@ export default new GraphQLObjectType({
     id: {
       type: GraphQLString,
     },
+    avatar: {
+      type: GraphQLString,
+    },
     firstName: {
       type: GraphQLString,
     },
