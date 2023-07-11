@@ -17,6 +17,9 @@ export default new GraphQLObjectType({
     lastName: {
       type: GraphQLString,
     },
+    surname: {
+      type: GraphQLString,
+    },
     email: {
       type: GraphQLString,
     },
