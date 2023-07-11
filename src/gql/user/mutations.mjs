@@ -1,7 +1,7 @@
 import { GraphQLString } from 'graphql'
 import { GraphQLJSONObject } from 'graphql-compose'
 
-import { requestCode, login } from './services.mjs'
+import { requestCode, login, updateUser } from './services.mjs'
 
 export default {
   updateUser: {
