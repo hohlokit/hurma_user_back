@@ -167,3 +167,24 @@ export const getCelebrations = async (_, {}, { user }) => {
 
   return celebrations
 }
+
+export const updateUser = async (
+  _,
+  { firstName, lastName, surname, email, phone, avatar },
+  { user }
+) => {
+  console.log(
+    '________________________\nAVATAR:',
+    avatar,
+    '\n________________________'
+  )
+  const oldUser = await Users.findOne({ id: user.id })
+  if (!oldUser) throw createHttpError(400, 'Cannot find user with provided id')
+
+  const updated = await Users.findOneAndUpdate(
+    { id: user.id },
+    { firstName, lastName, surname, email, phone },
+    { returnDocument: 'after' }
+  )
+  return res.status(200).json(updated)
+}

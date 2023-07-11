@@ -30,6 +30,7 @@ const RootMutation = new GraphQLObjectType({
     createRequest: requestMutations.create,
     createEvent: eventMutations.create,
     joinEvent: eventMutations.joinEvent,
+    updateUser: userMutations.updateUser
   }),
 })
 
