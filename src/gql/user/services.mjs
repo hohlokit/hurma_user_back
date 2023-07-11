@@ -179,12 +179,12 @@ export const updateUser = async (
     '\n________________________'
   )
   const oldUser = await Users.findOne({ id: user.id })
-  if (!oldUser) throw createHttpError(400, 'Cannot find user with provided id')
+  if (!oldUser) throw new Error(400, 'Cannot find user with provided id')
 
   const updated = await Users.findOneAndUpdate(
     { id: user.id },
     { firstName, lastName, surname, email, phone },
     { returnDocument: 'after' }
   )
-  return res.status(200).json(updated)
+  return updated
 }
