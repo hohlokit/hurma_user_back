@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
+import moment from 'moment'
 
 import sendMail from '../services/send-mail.mjs'
 import { userStatuses } from '../enums/index.mjs'
