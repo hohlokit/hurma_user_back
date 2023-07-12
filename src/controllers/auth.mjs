@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 
 import { userStatuses } from '../enums/index.mjs'
 import { Users } from '../db/models/users.mjs'
+import validateEmail from '../utils/validate-email.mjs'
 
 export const requestCode = async (req, res, next) => {
   try {
