@@ -178,9 +178,8 @@ export const updateUser = async (
     avatar,
     '\n________________________'
   )
-  user = { id: 'FFngtsXNYuxw' }
   const oldUser = await Users.findOne({ id: user.id })
-  // if (!oldUser) throw new Error(400, 'Cannot find user with provided id')
+  if (!oldUser) throw new Error(400, 'Cannot find user with provided id')
 
   const updated = await Users.findOneAndUpdate(
     { id: user.id },
