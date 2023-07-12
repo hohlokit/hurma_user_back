@@ -1,13 +1,15 @@
 import express from 'express'
-import { graphqlHTTP } from 'express-graphql'
 import dotenv from 'dotenv'
 import { fileURLToPath } from 'url'
 import path from 'path'
+import cors from 'cors'
+import formData from 'express-form-data'
 
 import { connectDB } from './src/db/connectDb.mjs'
-import schema from './src/gql/index.mjs'
-import { verifyToken } from './src/mw/verifyToken.mjs'
 import updateBalance from './src/cron/update-balance.mjs'
+import errorHandler from './src/mw/errorHandler.mjs'
+
+import routes from './src/routes/index.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -22,18 +24,16 @@ app.listen(PORT)
 connectDB()
 updateBalance()
 
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(formData.parse())
+
 app.use('/public', express.static('uploads'))
 
-app.use('/api', verifyToken)
+app.use(cors({}))
 
-app.use(
-  '/api',
-  graphqlHTTP((req) => ({
-    schema,
-    graphiql: true,
-    context: { user: req.user },
-  }))
-)
+app.use('/api', routes)
+app.use(errorHandler)
 
 app.use(express.static('client/build'))
 
