@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
 
+import { sendMail } from '../services/send-mail.mjs'
 import { userStatuses } from '../enums/index.mjs'
 import { Users } from '../db/models/users.mjs'
 import validateEmail from '../utils/validate-email.mjs'
