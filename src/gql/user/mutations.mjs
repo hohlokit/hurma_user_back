@@ -1,11 +1,12 @@
 import { GraphQLString } from 'graphql'
 import { GraphQLJSONObject } from 'graphql-compose'
 
+import UserType from './type.mjs'
 import { requestCode, login, updateUser } from './services.mjs'
 
 export default {
   updateUser: {
-    type: GraphQLString,
+    type: UserType,
     args: {
       id: {
         name: 'id',
