@@ -7,7 +7,7 @@ import { requestTypes } from '../enums/index.mjs'
 
 export const createRequest = async (req, res, next) => {
   try {
-    const { startDate, endDate, type } = req.body
+    const { startDate, endDate, type, comment } = req.body
 
     if (!startDate || !endDate)
       throw createHttpError(400, 'Provide both of start and end dates')
