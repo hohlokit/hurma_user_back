@@ -13,9 +13,9 @@ import route404 from '../mw/route-404.mjs'
 const router = express.Router()
 
 router.get('/', verifyToken, getSelf)
-router.get('/:userId', verifyToken, getById)
 router.get('/absent-by-date', verifyToken, getAbsentByDate)
 router.get('/celebrations', verifyToken, getCelebrations)
+router.get('/:userId', verifyToken, getById)
 
 router.patch('/:userId', verifyToken, updateUser)
 
