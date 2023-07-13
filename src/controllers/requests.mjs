@@ -55,7 +55,7 @@ export const createRequest = async (req, res, next) => {
 
 export const getRequests = async (req, res, next) => {
   try {
-    const { limit = 10, offset = 0, type } = req.body
+    const { limit = 10, offset = 0, type } = req.query
 
     const user = await Users.findOne({ id: user.id })
     if (!user) throw createHttpError(400, 'Cannot find user with provided id')
