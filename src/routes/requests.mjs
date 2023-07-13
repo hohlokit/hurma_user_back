@@ -7,7 +7,7 @@ import route404 from '../mw/route-404.mjs'
 const router = express.Router()
 
 router.post('/', verifyToken, createRequest)
-router.get('/:requestId', verifyToken, getRequests)
+router.get('/', verifyToken, getRequests)
 
 router.get('*', route404)
 

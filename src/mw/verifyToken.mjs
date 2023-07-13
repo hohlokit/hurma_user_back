@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
 
-import {userStatuses} from '../enums/index.mjs'
+import { userStatuses } from '../enums/index.mjs'
 
 export const verifyToken = (req, _, next) => {
   try {
@@ -22,6 +22,8 @@ export const verifyToken = (req, _, next) => {
       }
       if (user.status === userStatuses.INACTIVE)
         throw createHttpError(401, 'User disabled')
+
+      req.user = user
 
       next()
     })
