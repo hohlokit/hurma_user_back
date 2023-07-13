@@ -7,7 +7,7 @@ export const getById = async (req, res, next) => {
     const { id } = req.params
 
     const user = await Users.findOne(
-      { id: id ?? req?.user?.id },
+      { id },
       {
         _id: 0,
         __v: 0,
@@ -128,6 +128,24 @@ export const updateUser = async (req, res, next) => {
       returnDocument: 'after',
     })
     return res.status(200).json(updated)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getSelf = async (req, res, next) => {
+  try {
+    const user = await Users.findOne(
+      { id: req?.user?.id },
+      {
+        _id: 0,
+        __v: 0,
+        loginCode: 0,
+        password: 0,
+      }
+    )
+
+    return res.status(200).json(user)
   } catch (error) {
     next(error)
   }
