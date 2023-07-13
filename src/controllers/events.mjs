@@ -8,13 +8,13 @@ export const createEvent = async (req, res, next) => {
     if (!startDate || !endDate)
       throw createHttpError('Provide both of start and end dates')
 
-    const request = await Events.create({
+    const event = await Events.create({
       name,
       description,
       startDate,
       endDate,
     })
-    return res.status(200).json({ request })
+    return res.status(200).json(event)
   } catch (error) {
     next(error)
   }
