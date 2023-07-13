@@ -50,7 +50,7 @@ export const getEvent = async (req, res, next) => {
 
     if (!eventId) throw createHttpError(400, 'Event id was not provided')
 
-    const event = await Events.findOne({ event })
+    const event = await Events.findOne({ id: eventId })
       .populate('members', '-_id id email firstName lastName surname')
       .populate('creatros', '-_id id email firstName lastName surname')
 
