@@ -104,7 +104,6 @@ export const updateUser = async (req, res, next) => {
   try {
     const { userId } = req.params
     const { firstName, lastName, surname, email, phone, birthday } = req.body
-    console.log(1, req.files)
     const user = await Users.findOne({ id: userId })
     if (!user) throw createHttpError(400, 'Cannot find user with provided id')
 
@@ -113,7 +112,6 @@ export const updateUser = async (req, res, next) => {
     if (req.files) {
       const { avatar } = req.files
 
-      console.log(2, avatar)
       avatarData = avatar
       if (avatarData === false) avatarData = deleteAvatar
       else if (avatarData) {
@@ -122,7 +120,6 @@ export const updateUser = async (req, res, next) => {
           savePath: `/avatars`,
           newFilename: req.user.id,
         })
-        console.log(3, filename)
 
         upd['avatar'] = `/public/avatars/${filename}`
       }

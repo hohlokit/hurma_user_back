@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(formData.parse())
 
-app.use('/public', express.static('uploads'))
+app.use('/public', express.static('src/uploads'))
 
 app.use(cors({}))
 
