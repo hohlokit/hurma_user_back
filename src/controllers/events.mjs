@@ -52,7 +52,7 @@ export const getEvent = async (req, res, next) => {
 
     const event = await Events.findOne({ id: eventId })
       .populate('members', '-_id id email firstName lastName surname')
-      .populate('creatros', '-_id id email firstName lastName surname')
+      .populate('creators', '-_id id email firstName lastName surname')
 
     return res.status(200).json(event)
   } catch (error) {
