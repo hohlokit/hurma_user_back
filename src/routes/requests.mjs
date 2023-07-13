@@ -11,4 +11,7 @@ const router = express.Router()
 router.post('/', verifyToken, createRequest)
 router.get('/:requestId', verifyToken, getRequests)
 
+
+router.get('*', route404)
+
 export default router

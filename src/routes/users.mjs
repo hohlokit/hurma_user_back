@@ -5,18 +5,20 @@ import {
   getAbsentByDate,
   getCelebrations,
   updateUser,
-  getSelf
+  getSelf,
 } from '../controllers/users.mjs'
 import { verifyToken } from '../mw/verifyToken.mjs'
+import route404 from '../mw/route-404.mjs'
 
 const router = express.Router()
 
-router.get('/',verifyToken, getSelf)
+router.get('/', verifyToken, getSelf)
 router.get('/:userId', verifyToken, getById)
 router.get('/absent-by-date', verifyToken, getAbsentByDate)
 router.get('/celebrations', verifyToken, getCelebrations)
 
 router.patch('/:userId', verifyToken, updateUser)
 
-router.get('/')
+router.get('*', route404)
+
 export default router

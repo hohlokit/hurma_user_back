@@ -17,4 +17,6 @@ router.patch('/:eventId', verifyToken, joinEvent)
 router.get('/', verifyToken, getEvents)
 router.get('/:eventId', verifyToken, getEvent)
 
+router.get('*', route404)
+
 export default router
