@@ -40,7 +40,7 @@ export const createRequest = async (req, res, next) => {
       })
 
     const request = await Requests.create({
-      user: client._id,
+      user: user._id,
       startDate: _startDate,
       endDate: _endDate,
       type,

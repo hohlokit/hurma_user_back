@@ -41,4 +41,4 @@ app.use('*', (_, res) => {
   res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
 })
 
-console.log(`Running a GraphQL API server at http://localhost:${PORT}/api`)
+console.log(`Server is running. \n Port: ${PORT}\n Api: /api`)

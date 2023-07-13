@@ -135,7 +135,6 @@ export const updateUser = async (req, res, next) => {
 
 export const getSelf = async (req, res, next) => {
   try {
-    console.log(req.user.id)
     const user = await Users.findOne(
       { id: req?.user?.id },
       {
@@ -145,7 +144,7 @@ export const getSelf = async (req, res, next) => {
         password: 0,
       }
     )
-    console.log(user)
+
     return res.status(200).json(user)
   } catch (error) {
     next(error)
