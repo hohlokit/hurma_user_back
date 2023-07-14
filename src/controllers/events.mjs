@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors'
 import { Events } from '../db/models/events.mjs'
+import moment from 'moment'
 
 export const createEvent = async (req, res, next) => {
   try {
@@ -7,6 +8,10 @@ export const createEvent = async (req, res, next) => {
 
     if (!startDate || !endDate)
       throw createHttpError('Provide both of start and end dates')
+    if (moment(startDate).isAfter(endDate))
+      throw createHttpError(400, 'Start date should be before end')
+    if (moment(startDate).isBefore(moment))
+      throw createHttpError(400, 'Start date should be in future')
 
     const event = await Events.create({
       name,
@@ -25,6 +30,12 @@ export const joinEvent = async (req, res, next) => {
     const { eventId } = req.params
     const event = await Events.findOne({ id: eventId })
     if (!event) throw createHttpError(400, 'Cannot find event with provided id')
+
+    if (
+      event.creators.includes(req.user._id) ||
+      event.members.includes(req.user._id)
+    )
+      throw createHttpError(400, 'You already participicate this event')
 
     const upd = await Events.findOneAndUpdate(
       { id: eventId },
