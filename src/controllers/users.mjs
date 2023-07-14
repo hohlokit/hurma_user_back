@@ -64,6 +64,7 @@ export const getCelebrations = async (req, res, next) => {
         firstName: 1,
         lastName: 1,
         surname: 1,
+        avatar: 1,
         birthday: 1,
         todayDayOfYear: { $dayOfYear: today },
         dayOfYear: { $dayOfYear: '$birthday' },
@@ -76,6 +77,7 @@ export const getCelebrations = async (req, res, next) => {
         lastName: 1,
         surname: 1,
         birthday: 1,
+        avatar: 1,
         daysTillBirthday: {
           $subtract: [
             {
