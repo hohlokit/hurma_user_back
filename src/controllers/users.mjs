@@ -1,8 +1,10 @@
 import { Requests } from '../db/models/requests.mjs'
+import { Events } from '../db/models/events.mjs'
 import { Users } from '../db/models/users.mjs'
 import requestStatuses from '../enums/request-statuses.mjs'
 import { saveFile } from '../utils/index.mjs'
 import moment from 'moment'
+import { ObjectId } from 'mongodb'
 
 export const getById = async (req, res, next) => {
   try {
@@ -149,6 +151,56 @@ export const getSelf = async (req, res, next) => {
     )
 
     return res.status(200).json(user)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getTimeline = async (req, res, next) => {
+  try {
+    const result = []
+
+    const user = await Users.findOne(
+      { id: req?.user?.id },
+      {
+        _id: 1,
+        __v: 0,
+        loginCode: 0,
+        password: 0,
+      }
+    )
+    const userId = user ? user._id : null
+
+    const requests = await Requests.find({ user: new ObjectId(userId) })
+
+    for (let index = 0; index < requests.length; index++) {
+      const desiredFields = ['type', 'status', 'startDate', 'endDate', 'id','comment']
+      const copiedObject = {}
+      desiredFields.forEach((field) => {
+        copiedObject[field] = requests[index][field];
+        copiedObject.elementType="request";
+      })
+      result.push(copiedObject);
+    }
+
+    const events = await Events.find({
+      $or: [
+        { members: new ObjectId(userId) },
+        { creators: new ObjectId(userId) },
+      ],
+    })
+
+    for (let index = 0; index < events.length; index++) {
+      const desiredFields = ['name', 'description', 'startDate', 'endDate', 'id']
+      const copiedObject = {}
+      desiredFields.forEach((field) => {
+        copiedObject[field] = events[index][field];
+        copiedObject.type="event";
+      })
+      result.push(copiedObject);
+    }
+
+    return res.status(200).json(result)
   } catch (error) {
     next(error)
   }
