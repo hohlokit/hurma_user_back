@@ -158,7 +158,7 @@ export const getSelf = async (req, res, next) => {
 
 export const getTimeline = async (req, res, next) => {
   try {
-    const result = []
+    let result = []
 
     const user = await Users.findOne(
       { id: req?.user?.id },
@@ -169,98 +169,83 @@ export const getTimeline = async (req, res, next) => {
         password: 0,
       }
     )
-    const userId = new ObjectId(user._id); 
+    const userId = new ObjectId(user._id)
 
     const requests = await Requests.find({ user: userId })
 
-    requests.map(request => {
-      const desiredFields = ['type', 'status', 'startDate', 'endDate', 'id', 'comment'];
-      const startDateTime = moment(request.startDate);
-      const endDateTime = moment(request.endDate);
-    
-      if (!startDateTime.isSame(endDateTime, 'day')) {
-        const startDateObject = {};
-        desiredFields.forEach((field) => {
-          startDateObject[field] = request[field];
-        });
-        startDateObject.elementType = 'request (startDate)';
-        delete startDateObject.endDate;
-        startDateObject.date = startDateObject.startDate;
-        delete startDateObject.startDate;
-        result.push(startDateObject);
-    
-        const endDateObject = {};
-        desiredFields.forEach((field) => {
-          endDateObject[field] = request[field];
-        });
-        endDateObject.elementType = 'request (endDate)';
-        delete endDateObject.startDate;
-        endDateObject.date = endDateObject.endDate;
-        delete startDateObject.endDate;
-        result.push(endDateObject);
-      } else {
-        const copiedObject = {};
-        desiredFields.forEach((field) => {
-          copiedObject[field] = request[field];
-        });
-        copiedObject.elementType = 'request';
-        delete copiedObject.startDate;
-        copiedObject.date = copiedObject.endDate;
-        delete copiedObject.endDate;
-        result.push(copiedObject);
+    const newRequests = requests.reduce((result, request) => {
+      const newObj = {
+        type: request.type,
+        status: request.status,
+        startDate: request.startDate,
+        endDate: request.endDate,
+        id: request.id,
+        comment: request.comment,
       }
-    })
+      const startDateTime = moment(newObj.startDate)
+      const endDateTime = moment(newObj.endDate)
+      if (!startDateTime.isSame(endDateTime, 'day')) {
+        const startDateObject = { ...newObj }
+        startDateObject.elementType = 'request (startDate)'
+        startDateObject.date = startDateObject.startDate
+        result.push(startDateObject)
+        const endDateObject = { ...newObj }
+        endDateObject.elementType = 'request (endDate)'
+        endDateObject.date = endDateObject.endDate
+        result.push(endDateObject)
+      } else {
+        const copiedObject = { ...newObj }
+        newObj.elementType = 'request'
+        copiedObject.date = copiedObject.endDate
+        result.push(copiedObject)
+      }
+      return result
+    }, [])
 
     const events = await Events.find({
-      $or: [
-        { members: userId },
-        { creators: userId },
-      ],
+      $or: [{ members: userId }, { creators: userId }],
     })
 
-    events.map(event => {
-      const desiredFields = ['name', 'description', 'startDate', 'endDate', 'id'];
-      const startDate = moment(event.startDate);
-      const endDate = moment(event.endDate);
-    
-      if (!startDate.isSame(endDate, 'day')) {
-        const startDateObject = {};
-        desiredFields.forEach((field) => {
-          startDateObject[field] = event[field];
-        });
-        startDateObject.type = "event (startDate)";
-        delete startDateObject.endDate;
-        startDateObject.date = startDateObject.startDate;
-        delete startDateObject.startDate;
-        result.push(startDateObject);
-    
-        const endDateObject = {};
-        desiredFields.forEach((field) => {
-          endDateObject[field] = event[field];
-        });
-        endDateObject.type = "event (endDate)";
-        delete endDateObject.startDate;
-        endDateObject.date = endDateObject.endDate;
-        delete endDateObject.endDate;
-        result.push(endDateObject);
-      } else {
-        const copiedObject = {};
-        desiredFields.forEach((field) => {
-          copiedObject[field] = event[field];
-        });
-        copiedObject.type = "event";
-        delete copiedObject.startDate;
-        copiedObject.date = copiedObject.endDate;
-        delete copiedObject.endDate;
-        result.push(copiedObject);
+    const newEvents = events.reduce((result, event) => {
+      const newObj = {
+        name: event.name,
+        description: event.description,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        id: event.id,
       }
+      const startDateTime = moment(newObj.startDate)
+      const endDateTime = moment(newObj.endDate)
+      if (!startDateTime.isSame(endDateTime, 'day')) {
+        const startDateObject = { ...newObj }
+        startDateObject.elementType = 'event (startDate)'
+        startDateObject.date = startDateObject.startDate
+        result.push(startDateObject)
+        const endDateObject = { ...newObj }
+        endDateObject.elementType = 'event (endDate)'
+        endDateObject.date = endDateObject.endDate
+        result.push(endDateObject)
+      } else {
+        const copiedObject = { ...newObj }
+        newObj.elementType = 'event'
+        copiedObject.date = copiedObject.endDate
+        result.push(copiedObject)
+      }
+      return result
+    }, [])
+
+    result = newEvents.concat(newRequests)
+
+    result.forEach((element) => {
+      delete element.endDate
+      delete element.startDate
     })
 
     result.sort((a, b) => {
-      const dateA = moment(a.date);
-      const dateB = moment(b.date);
-      return dateB - dateA;
-    });
+      const dateA = moment(a.date)
+      const dateB = moment(b.date)
+      return dateB - dateA
+    })
 
     return res.status(200).json(result)
   } catch (error) {
