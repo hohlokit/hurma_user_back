@@ -1,8 +1,10 @@
 import { Requests } from '../db/models/requests.mjs'
+import { Events } from '../db/models/events.mjs'
 import { Users } from '../db/models/users.mjs'
 import requestStatuses from '../enums/request-statuses.mjs'
 import { saveFile } from '../utils/index.mjs'
 import moment from 'moment'
+import { ObjectId } from 'mongodb'
 
 export const getById = async (req, res, next) => {
   try {
@@ -149,6 +151,93 @@ export const getSelf = async (req, res, next) => {
     )
 
     return res.status(200).json(user)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getTimeline = async (req, res, next) => {
+  try {
+    let result = []
+
+    const user = await Users.findOne(
+      { id: req?.user?.id },
+      {
+        _id: 1,
+        __v: 0,
+        loginCode: 0,
+        password: 0,
+      }
+    )
+    const userId = new ObjectId(user._id)
+
+    const requests = await Requests.find({ user: userId })
+
+    const newRequests = requests.reduce((result, request) => {
+      const newObj = {
+        type: request.type,
+        status: request.status,
+        id: request.id,
+        comment: request.comment,
+      }
+      const startDateTime = moment(request.startDate)
+      const endDateTime = moment(request.endDate)
+      if (!startDateTime.isSame(endDateTime, 'day')) {
+        result.push({
+          ...newObj,
+          elementType: 'request (startDate)',
+          date: request.startDate,
+        })
+
+        result.push({
+          ...newObj,
+          elementType: 'request (endDate)',
+          date: request.endDate,
+        })
+      } else {
+        result.push({ ...newObj, elementType: 'request', date: request.startDate })
+      }
+      return result
+    }, [])
+
+    const events = await Events.find({
+      $or: [{ members: userId }, { creators: userId }],
+    })
+
+    const newEvents = events.reduce((result, event) => {
+      const newObj = {
+        name: event.name,
+        description: event.description,
+        id: event.id,
+      }
+      const startDateTime = moment(event.startDate)
+      const endDateTime = moment(event.endDate)
+      if (!startDateTime.isSame(endDateTime, 'day')) {
+        result.push({
+          ...newObj,
+          elementType: 'event (startDate)',
+          date: event.startDate,
+        })
+        result.push({
+          ...newObj,
+          elementType: 'event (endDate)',
+          date: event.endDate,
+        })
+      } else {
+        result.push({ ...newObj, elementType: 'event', date: event.startDate })
+      }
+      return result
+    }, [])
+
+    result = newEvents.concat(newRequests)
+
+    result.sort((a, b) => {
+      const dateA = moment(a.date)
+      const dateB = moment(b.date)
+      return dateB - dateA
+    })
+
+    return res.status(200).json(result)
   } catch (error) {
     next(error)
   }
