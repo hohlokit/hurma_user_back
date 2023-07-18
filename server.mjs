@@ -30,7 +30,7 @@ app.use(formData.parse())
 
 app.use('/public', express.static('src/uploads'))
 
-app.use(cors({}))
+app.use(cors())
 
 app.use('/api', routes)
 app.use(errorHandler)
