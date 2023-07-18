@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { weekendDays } from 'moment-business'
 import createHttpError from 'http-errors'
 
 import { Users } from '../db/models/users.mjs'
@@ -29,8 +30,7 @@ export const createRequest = async (req, res, next) => {
     const user = await Users.findOne({ id: req.user.id })
     const user_balance = user?.balance[type]
 
-    const countDays = moment(startDate).diff(endDate, 'days')
-
+    const countDays = weekendDays(moment(startDate), moment(endDate))
     if (user_balance + countDays < 0 || user_balance < 1)
       throw createHttpError(400, 'Insufficient balance')
 
