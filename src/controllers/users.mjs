@@ -186,16 +186,16 @@ export const getTimeline = async (req, res, next) => {
         result.push({
           ...newObj,
           elementType: 'request (startDate)',
-          date: newObj.startDate,
+          date: request.startDate,
         })
 
         result.push({
           ...newObj,
           elementType: 'request (endDate)',
-          date: newObj.endDate,
+          date: request.endDate,
         })
       } else {
-        result.push({ ...newObj, elementType: 'request', date: newObj.startDate })
+        result.push({ ...newObj, elementType: 'request', date: request.startDate })
       }
       return result
     }, [])
@@ -208,25 +208,23 @@ export const getTimeline = async (req, res, next) => {
       const newObj = {
         name: event.name,
         description: event.description,
-        startDate: event.startDate,
-        endDate: event.endDate,
         id: event.id,
       }
-      const startDateTime = moment(newObj.startDate)
-      const endDateTime = moment(newObj.endDate)
+      const startDateTime = moment(event.startDate)
+      const endDateTime = moment(event.endDate)
       if (!startDateTime.isSame(endDateTime, 'day')) {
         result.push({
           ...newObj,
           elementType: 'event (startDate)',
-          date: newObj.startDate,
+          date: event.startDate,
         })
         result.push({
           ...newObj,
           elementType: 'event (endDate)',
-          date: newObj.endDate,
+          date: event.endDate,
         })
       } else {
-        result.push({ ...newObj, elementType: 'event', date: newObj.startDate })
+        result.push({ ...newObj, elementType: 'event', date: event.startDate })
       }
       return result
     }, [])
