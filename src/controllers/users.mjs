@@ -169,13 +169,12 @@ export const getTimeline = async (req, res, next) => {
         password: 0,
       }
     )
-    const userId = user ? user._id : null
+    const userId = new ObjectId(user._id); 
 
-    const requests = await Requests.find({ user: new ObjectId(userId) })
+    const requests = await Requests.find({ user: userId })
 
-    for (let index = 0; index < requests.length; index++) {
+    requests.map(request => {
       const desiredFields = ['type', 'status', 'startDate', 'endDate', 'id', 'comment'];
-      const request = requests[index];
       const startDateTime = moment(request.startDate);
       const endDateTime = moment(request.endDate);
     
@@ -210,18 +209,17 @@ export const getTimeline = async (req, res, next) => {
         delete copiedObject.endDate;
         result.push(copiedObject);
       }
-    }
+    })
 
     const events = await Events.find({
       $or: [
-        { members: new ObjectId(userId) },
-        { creators: new ObjectId(userId) },
+        { members: userId },
+        { creators: userId },
       ],
     })
 
-    for (let index = 0; index < events.length; index++) {
+    events.map(event => {
       const desiredFields = ['name', 'description', 'startDate', 'endDate', 'id'];
-      const event = events[index];
       const startDate = moment(event.startDate);
       const endDate = moment(event.endDate);
     
@@ -256,7 +254,7 @@ export const getTimeline = async (req, res, next) => {
         delete copiedObject.endDate;
         result.push(copiedObject);
       }
-    }
+    })
 
     result.sort((a, b) => {
       const dateA = moment(a.date);
