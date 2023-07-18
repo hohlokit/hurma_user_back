@@ -174,13 +174,42 @@ export const getTimeline = async (req, res, next) => {
     const requests = await Requests.find({ user: new ObjectId(userId) })
 
     for (let index = 0; index < requests.length; index++) {
-      const desiredFields = ['type', 'status', 'startDate', 'endDate', 'id','comment']
-      const copiedObject = {}
-      desiredFields.forEach((field) => {
-        copiedObject[field] = requests[index][field];
-        copiedObject.elementType="request";
-      })
-      result.push(copiedObject);
+      const desiredFields = ['type', 'status', 'startDate', 'endDate', 'id', 'comment'];
+      const request = requests[index];
+      const startDateTime = moment(request.startDate);
+      const endDateTime = moment(request.endDate);
+    
+      if (!startDateTime.isSame(endDateTime, 'day')) {
+        const startDateObject = {};
+        desiredFields.forEach((field) => {
+          startDateObject[field] = request[field];
+        });
+        startDateObject.elementType = 'request (startDate)';
+        delete startDateObject.endDate;
+        startDateObject.date = startDateObject.startDate;
+        delete startDateObject.startDate;
+        result.push(startDateObject);
+    
+        const endDateObject = {};
+        desiredFields.forEach((field) => {
+          endDateObject[field] = request[field];
+        });
+        endDateObject.elementType = 'request (endDate)';
+        delete endDateObject.startDate;
+        endDateObject.date = endDateObject.endDate;
+        delete startDateObject.endDate;
+        result.push(endDateObject);
+      } else {
+        const copiedObject = {};
+        desiredFields.forEach((field) => {
+          copiedObject[field] = request[field];
+        });
+        copiedObject.elementType = 'request';
+        delete copiedObject.startDate;
+        copiedObject.date = copiedObject.endDate;
+        delete copiedObject.endDate;
+        result.push(copiedObject);
+      }
     }
 
     const events = await Events.find({
@@ -191,14 +220,49 @@ export const getTimeline = async (req, res, next) => {
     })
 
     for (let index = 0; index < events.length; index++) {
-      const desiredFields = ['name', 'description', 'startDate', 'endDate', 'id']
-      const copiedObject = {}
-      desiredFields.forEach((field) => {
-        copiedObject[field] = events[index][field];
-        copiedObject.type="event";
-      })
-      result.push(copiedObject);
+      const desiredFields = ['name', 'description', 'startDate', 'endDate', 'id'];
+      const event = events[index];
+      const startDate = moment(event.startDate);
+      const endDate = moment(event.endDate);
+    
+      if (!startDate.isSame(endDate, 'day')) {
+        const startDateObject = {};
+        desiredFields.forEach((field) => {
+          startDateObject[field] = event[field];
+        });
+        startDateObject.type = "event (startDate)";
+        delete startDateObject.endDate;
+        startDateObject.date = startDateObject.startDate;
+        delete startDateObject.startDate;
+        result.push(startDateObject);
+    
+        const endDateObject = {};
+        desiredFields.forEach((field) => {
+          endDateObject[field] = event[field];
+        });
+        endDateObject.type = "event (endDate)";
+        delete endDateObject.startDate;
+        endDateObject.date = endDateObject.endDate;
+        delete endDateObject.endDate;
+        result.push(endDateObject);
+      } else {
+        const copiedObject = {};
+        desiredFields.forEach((field) => {
+          copiedObject[field] = event[field];
+        });
+        copiedObject.type = "event";
+        delete copiedObject.startDate;
+        copiedObject.date = copiedObject.endDate;
+        delete copiedObject.endDate;
+        result.push(copiedObject);
+      }
     }
+
+    result.sort((a, b) => {
+      const dateA = moment(a.date);
+      const dateB = moment(b.date);
+      return dateB - dateA;
+    });
 
     return res.status(200).json(result)
   } catch (error) {
