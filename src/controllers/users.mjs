@@ -188,16 +188,21 @@ export const getTimeline = async (req, res, next) => {
         const startDateObject = { ...newObj }
         startDateObject.elementType = 'request (startDate)'
         startDateObject.date = startDateObject.startDate
+        delete startDateObject.endDate
+        delete startDateObject.startDate
         result.push(startDateObject)
         const endDateObject = { ...newObj }
         endDateObject.elementType = 'request (endDate)'
         endDateObject.date = endDateObject.endDate
+        delete endDateObject.endDate
+        delete endDateObject.startDate
         result.push(endDateObject)
       } else {
-        const copiedObject = { ...newObj }
         newObj.elementType = 'request'
-        copiedObject.date = copiedObject.endDate
-        result.push(copiedObject)
+        newObj.date = newObj.endDate
+        delete newObj.endDate
+        delete newObj.startDate
+        result.push(newObj)
       }
       return result
     }, [])
@@ -220,26 +225,26 @@ export const getTimeline = async (req, res, next) => {
         const startDateObject = { ...newObj }
         startDateObject.elementType = 'event (startDate)'
         startDateObject.date = startDateObject.startDate
+        delete startDateObject.endDate
+        delete startDateObject.startDate
         result.push(startDateObject)
         const endDateObject = { ...newObj }
         endDateObject.elementType = 'event (endDate)'
         endDateObject.date = endDateObject.endDate
+        delete endDateObject.endDate
+        delete endDateObject.startDate
         result.push(endDateObject)
       } else {
-        const copiedObject = { ...newObj }
         newObj.elementType = 'event'
-        copiedObject.date = copiedObject.endDate
-        result.push(copiedObject)
+        newObj.date = copiedObject.endDate
+        delete newObj.endDate
+        delete newObj.startDate
+        result.push(newObj)
       }
       return result
     }, [])
 
     result = newEvents.concat(newRequests)
-
-    result.forEach((element) => {
-      delete element.endDate
-      delete element.startDate
-    })
 
     result.sort((a, b) => {
       const dateA = moment(a.date)
