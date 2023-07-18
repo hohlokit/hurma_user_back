@@ -186,7 +186,7 @@ export const getTimeline = async (req, res, next) => {
         result.push({
           ...newObj,
           elementType: 'request (startDate)',
-          date: newObj.endDate,
+          date: newObj.startDate,
         })
 
         result.push({
@@ -195,7 +195,7 @@ export const getTimeline = async (req, res, next) => {
           date: newObj.endDate,
         })
       } else {
-        result.push({ ...newObj, elementType: 'request', date: newObj.endDate })
+        result.push({ ...newObj, elementType: 'request', date: newObj.startDate })
       }
       return result
     }, [])
@@ -218,7 +218,7 @@ export const getTimeline = async (req, res, next) => {
         result.push({
           ...newObj,
           elementType: 'event (startDate)',
-          date: newObj.endDate,
+          date: newObj.startDate,
         })
         result.push({
           ...newObj,
@@ -226,7 +226,7 @@ export const getTimeline = async (req, res, next) => {
           date: newObj.endDate,
         })
       } else {
-        result.push({ ...newObj, elementType: 'event', date: newObj.endDate })
+        result.push({ ...newObj, elementType: 'event', date: newObj.startDate })
       }
       return result
     }, [])
