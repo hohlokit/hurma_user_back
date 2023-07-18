@@ -177,32 +177,25 @@ export const getTimeline = async (req, res, next) => {
       const newObj = {
         type: request.type,
         status: request.status,
-        startDate: request.startDate,
-        endDate: request.endDate,
         id: request.id,
         comment: request.comment,
       }
-      const startDateTime = moment(newObj.startDate)
-      const endDateTime = moment(newObj.endDate)
+      const startDateTime = moment(request.startDate)
+      const endDateTime = moment(request.endDate)
       if (!startDateTime.isSame(endDateTime, 'day')) {
-        const startDateObject = { ...newObj }
-        startDateObject.elementType = 'request (startDate)'
-        startDateObject.date = startDateObject.startDate
-        delete startDateObject.endDate
-        delete startDateObject.startDate
-        result.push(startDateObject)
-        const endDateObject = { ...newObj }
-        endDateObject.elementType = 'request (endDate)'
-        endDateObject.date = endDateObject.endDate
-        delete endDateObject.endDate
-        delete endDateObject.startDate
-        result.push(endDateObject)
+        result.push({
+          ...newObj,
+          elementType: 'request (startDate)',
+          date: newObj.endDate,
+        })
+
+        result.push({
+          ...newObj,
+          elementType: 'request (endDate)',
+          date: newObj.endDate,
+        })
       } else {
-        newObj.elementType = 'request'
-        newObj.date = newObj.endDate
-        delete newObj.endDate
-        delete newObj.startDate
-        result.push(newObj)
+        result.push({ ...newObj, elementType: 'request', date: newObj.endDate })
       }
       return result
     }, [])
@@ -222,24 +215,18 @@ export const getTimeline = async (req, res, next) => {
       const startDateTime = moment(newObj.startDate)
       const endDateTime = moment(newObj.endDate)
       if (!startDateTime.isSame(endDateTime, 'day')) {
-        const startDateObject = { ...newObj }
-        startDateObject.elementType = 'event (startDate)'
-        startDateObject.date = startDateObject.startDate
-        delete startDateObject.endDate
-        delete startDateObject.startDate
-        result.push(startDateObject)
-        const endDateObject = { ...newObj }
-        endDateObject.elementType = 'event (endDate)'
-        endDateObject.date = endDateObject.endDate
-        delete endDateObject.endDate
-        delete endDateObject.startDate
-        result.push(endDateObject)
+        result.push({
+          ...newObj,
+          elementType: 'event (startDate)',
+          date: newObj.endDate,
+        })
+        result.push({
+          ...newObj,
+          elementType: 'event (endDate)',
+          date: newObj.endDate,
+        })
       } else {
-        newObj.elementType = 'event'
-        newObj.date = copiedObject.endDate
-        delete newObj.endDate
-        delete newObj.startDate
-        result.push(newObj)
+        result.push({ ...newObj, elementType: 'event', date: newObj.endDate })
       }
       return result
     }, [])
