@@ -159,9 +159,9 @@ export const getSelf = async (req, res, next) => {
 export const getTimeline = async (req, res, next) => {
   try {
     let result = []
-
+    console.log(req.params);
     const user = await Users.findOne(
-      { id: req?.user?.id },
+      { id: req.params.userId },
       {
         _id: 1,
         __v: 0,
@@ -178,20 +178,23 @@ export const getTimeline = async (req, res, next) => {
         type: request.type,
         status: request.status,
         id: request.id,
-        comment: request.comment,
+        description: request.comment,
+        title: request.type,
       }
       const startDateTime = moment(request.startDate)
       const endDateTime = moment(request.endDate)
       if (!startDateTime.isSame(endDateTime, 'day')) {
         result.push({
           ...newObj,
-          elementType: 'request (startDate)',
+          elementType: 'request',
+          dateType: '(startDate)',
           date: request.startDate,
         })
 
         result.push({
           ...newObj,
-          elementType: 'request (endDate)',
+          elementType: 'request',
+          dateType: '(endDate)',
           date: request.endDate,
         })
       } else {
@@ -209,18 +212,21 @@ export const getTimeline = async (req, res, next) => {
         name: event.name,
         description: event.description,
         id: event.id,
+        title: event.name,
       }
       const startDateTime = moment(event.startDate)
       const endDateTime = moment(event.endDate)
       if (!startDateTime.isSame(endDateTime, 'day')) {
         result.push({
           ...newObj,
-          elementType: 'event (startDate)',
+          elementType: 'event',
+          dateType: '(startDate)',
           date: event.startDate,
         })
         result.push({
           ...newObj,
-          elementType: 'event (endDate)',
+          elementType: 'event',
+          dateType: '(endDate)',
           date: event.endDate,
         })
       } else {

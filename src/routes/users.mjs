@@ -16,7 +16,7 @@ const router = express.Router()
 router.get('/', verifyToken, getSelf)
 router.get('/absent-by-date', verifyToken, getAbsentByDate)
 router.get('/celebrations', verifyToken, getCelebrations)
-router.get('/timeline', verifyToken, getTimeline)
+router.get('/timeline/:userId', verifyToken, getTimeline)
 router.get('/:userId', verifyToken, getById)
 
 router.patch('/:userId', verifyToken, updateUser)
