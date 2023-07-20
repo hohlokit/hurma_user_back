@@ -117,8 +117,11 @@ export const updateUser = async (req, res, next) => {
       const { avatar } = req.files
 
       avatarData = avatar
-      if (avatarData === false) avatarData = deleteAvatar
-      else if (avatarData) {
+      if (avatarData === false) {
+        avatarData = null
+
+        upd['avatar'] = null
+      } else if (avatarData) {
         const { filename } = await saveFile({
           file: avatar,
           savePath: `/avatars`,
@@ -195,7 +198,11 @@ export const getTimeline = async (req, res, next) => {
           date: request.endDate,
         })
       } else {
-        result.push({ ...newObj, elementType: 'request', date: request.startDate })
+        result.push({
+          ...newObj,
+          elementType: 'request',
+          date: request.startDate,
+        })
       }
       return result
     }, [])
