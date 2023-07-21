@@ -74,13 +74,11 @@ export const getEvent = async (req, res, next) => {
 
 export const getEvents = async (req, res, next) => {
   try {
-    const { limit = 10, offset = 0, userEvents = 0 } = req.query
+    const { limit = 10, offset = 0, self = 0 } = req.query
 
     let query = {}
 
-    if (userEvents != 1) {
-      query = {}
-    } else {
+    if (Number(self) === 1) {
       query = {
         $or: [{ members: req.user._id }, { creators: req.user._id }],
       }
