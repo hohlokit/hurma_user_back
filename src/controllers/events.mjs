@@ -78,9 +78,7 @@ export const getEvents = async (req, res, next) => {
     const query = {}
 
     if (Number(self) === 1) {
-      query = {
-        $or: [{ members: req.user._id }, { creators: req.user._id }],
-      }
+      query.$or = [{ members: req.user._id }, { creators: req.user._id }]
     }
 
     const requests = await Events.find(query)
