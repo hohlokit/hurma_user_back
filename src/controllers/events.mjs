@@ -73,6 +73,7 @@ export const getEvent = async (req, res, next) => {
 
 export const getEvents = async (req, res, next) => {
   try {
+    console.log(1);
     const { limit = 10, offset = 0 } = req.query
 
     const requests = await Events.find({})
