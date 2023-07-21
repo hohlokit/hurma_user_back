@@ -73,10 +73,15 @@ export const getEvent = async (req, res, next) => {
 
 export const getEvents = async (req, res, next) => {
   try {
-    console.log(1);
-    const { limit = 10, offset = 0 } = req.query
+    const { limit = 10, offset = 0, self = 0 } = req.query
 
-    const requests = await Events.find({})
+    const query = {}
+
+    if (Number(self) === 1) {
+      query.$or = [{ members: req.user._id }, { creators: req.user._id }]
+    }
+
+    const requests = await Events.find(query)
       .sort({ createdAt: -1 })
       .skip(limit * offset)
       .limit(limit)
