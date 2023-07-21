@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors'
 import { Events } from '../db/models/events.mjs'
 import moment from 'moment'
+import { ObjectId } from 'mongodb'
 
 export const createEvent = async (req, res, next) => {
   try {
@@ -73,8 +74,16 @@ export const getEvent = async (req, res, next) => {
 
 export const getEvents = async (req, res, next) => {
   try {
-    console.log(1);
+    console.log(1)
     const { limit = 10, offset = 0 } = req.query
+
+    if (req.query.userId) {
+      const userId = new ObjectId(req.query.userId)
+      const userEvents = await Events.find({
+        $or: [{ members: userId }, { creators: userId }],
+      })
+      return res.status(200).json(userEvents)
+    }
 
     const requests = await Events.find({})
       .sort({ createdAt: -1 })
