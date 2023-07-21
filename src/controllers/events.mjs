@@ -1,7 +1,6 @@
 import createHttpError from 'http-errors'
 import { Events } from '../db/models/events.mjs'
 import moment from 'moment'
-import { ObjectId } from 'mongodb'
 
 export const createEvent = async (req, res, next) => {
   try {
@@ -76,7 +75,7 @@ export const getEvents = async (req, res, next) => {
   try {
     const { limit = 10, offset = 0, self = 0 } = req.query
 
-    let query = {}
+    const query = {}
 
     if (Number(self) === 1) {
       query = {
