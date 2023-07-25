@@ -93,10 +93,16 @@ export const getCelebrations = async (req, res, next) => {
         },
       },
     }
-
+    const filter = { $filter: { $gt: { daysTillBirthday: 0 } } }
     const sort = { $sort: { daysTillBirthday: 1 } }
     const limit = { $limit: 5 }
-    const celebrations = await Users.aggregate([pipe1, pipe2, sort, limit])
+    const celebrations = await Users.aggregate([
+      pipe1,
+      pipe2,
+      filter,
+      sort,
+      limit,
+    ])
 
     return res.status(200).json(celebrations)
   } catch (error) {

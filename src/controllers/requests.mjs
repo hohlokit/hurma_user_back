@@ -30,8 +30,8 @@ export const createRequest = async (req, res, next) => {
     const user = await Users.findOne({ id: req.user.id })
     const user_balance = user?.balance[type]
 
-    const countDays = business.weekendDays(moment(startDate), moment(endDate))
-    if (user_balance + countDays < 0 || user_balance < 1)
+    const countDays = business.weekDays(moment(startDate), moment(endDate))
+    if (user_balance - countDays < 0 || user_balance < 1)
       throw createHttpError(400, 'Insufficient balance')
 
     if (type !== requestTypes.OVERTIME)
