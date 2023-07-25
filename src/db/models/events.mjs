@@ -10,6 +10,9 @@ const event = new mongoose.Schema(
       unique: true,
       default: generateId,
     },
+    banner: {
+      type: String,
+    },
     name: {
       type: String,
     },

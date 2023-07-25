@@ -1,11 +1,14 @@
 import createHttpError from 'http-errors'
-import { Events } from '../db/models/events.mjs'
 import moment from 'moment'
+
+import { Events } from '../db/models/events.mjs'
+import saveFile from '../utils/save-file.mjs'
 
 export const createEvent = async (req, res, next) => {
   try {
     const { startDate, endDate, name, description } = req.body
 
+    if (!name) throw createHttpError(400, 'Event name is missing')
     if (!startDate || !endDate)
       throw createHttpError('Provide both of start and end dates')
     if (moment(startDate).isAfter(endDate))
@@ -13,12 +16,25 @@ export const createEvent = async (req, res, next) => {
     if (moment(startDate).isBefore(moment))
       throw createHttpError(400, 'Start date should be in future')
 
-    const event = await Events.create({
-      name,
-      description,
-      startDate,
-      endDate,
-    })
+    const create = { name, description, startDate, endDate }
+
+    let eventBanner
+    if (req.files) {
+      const { banner } = req.files
+
+      eventBanner = banner
+      if (eventBanner) {
+        const { filename } = await saveFile({
+          file: banner,
+          savePath: `/banners`,
+          newFilename: req.user.id,
+        })
+
+        create['banner'] = `/public/banners/${filename}`
+      }
+    }
+
+    const event = await Events.create(create)
     return res.status(200).json(event)
   } catch (error) {
     next(error)
