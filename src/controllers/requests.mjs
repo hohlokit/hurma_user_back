@@ -36,7 +36,7 @@ export const createRequest = async (req, res, next) => {
 
     if (type !== requestTypes.OVERTIME)
       await user.updateOne({
-        [`balance.${type}`]: (user_balance + countDays).toFixed(2),
+        [`balance.${type}`]: (user_balance - countDays).toFixed(2),
       })
 
     const request = await Requests.create({
