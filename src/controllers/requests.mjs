@@ -69,7 +69,8 @@ export const getRequests = async (req, res, next) => {
       .limit(limit)
       .populate('user')
 
-    return res.status(200).json(requests)
+    const count = await Requests.countDocuments(query)
+    return res.status(200).json({ count, requests })
   } catch (error) {
     next(error)
   }
