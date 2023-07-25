@@ -81,14 +81,18 @@ export const getEvents = async (req, res, next) => {
       query.$or = [{ members: req.user._id }, { creators: req.user._id }]
     }
 
-    const requests = await Events.find(query)
+    const count = await Events.countDocuments({
+      $or: [{ members: req.user._id }, { creators: req.user._id }],
+    })
+
+    const events = await Events.find(query)
       .sort({ createdAt: -1 })
       .skip(limit * offset)
       .limit(limit)
       .populate('members', '-_id id email firstName lastName')
       .populate('creators', '-_id id email firstName lastName')
 
-    return res.status(200).json(requests)
+    return res.status(200).json({ count, events })
   } catch (error) {
     next(error)
   }

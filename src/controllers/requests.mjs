@@ -62,6 +62,7 @@ export const getRequests = async (req, res, next) => {
 
     const query = { user: user._id }
     if (type) query.type = type
+    console.log(offset)
 
     const requests = await Requests.find(query)
       .sort({ _id: -1 })
@@ -69,7 +70,8 @@ export const getRequests = async (req, res, next) => {
       .limit(limit)
       .populate('user')
 
-    return res.status(200).json(requests)
+    const count = await Requests.countDocuments({ user: user._id })
+    return res.status(200).json({ count, requests })
   } catch (error) {
     next(error)
   }
