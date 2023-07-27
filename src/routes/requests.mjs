@@ -12,7 +12,7 @@ const router = express.Router()
 
 router.post('/', verifyToken, createRequest)
 router.get('/', verifyToken, getRequests)
-router.patch('/:requestId', verifyToken, declineRequest)
+router.patch('/decline/:requestId', verifyToken, declineRequest)
 
 router.get('*', route404)
 

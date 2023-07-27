@@ -4,8 +4,7 @@ import createHttpError from 'http-errors'
 
 import { Users } from '../db/models/users.mjs'
 import { Requests } from '../db/models/requests.mjs'
-import { requestTypes } from '../enums/index.mjs'
-import requestStatuses from '../enums/request-statuses.mjs'
+import { requestTypes, requestStatuses } from '../enums/index.mjs'
 
 export const createRequest = async (req, res, next) => {
   try {
@@ -81,7 +80,13 @@ export const declineRequest = async (req, res, next) => {
   try {
     const requestId = req.params.requestId
     const query = { id: requestId }
-    const updatedRequest  = await Requests.findOneAndUpdate(query, { status: requestStatuses.DECLINED })
+    const updatedRequest = await Requests.findOneAndUpdate(
+      query,
+      { status: requestStatuses.DECLINED },
+      {
+        returnDocument: 'after',
+      }
+    )
     return res.status(200).json(updatedRequest)
   } catch (error) {
     next(error)
