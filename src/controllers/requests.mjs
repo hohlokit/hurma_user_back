@@ -75,3 +75,22 @@ export const getRequests = async (req, res, next) => {
     next(error)
   }
 }
+
+export const updateRequests = async (req, res, next) => {
+  try {
+    const requestId = req.params.requestId
+    const query = { id: requestId }
+    console.log(query)
+    await Requests.updateOne(query, { $set: { status: 'declined' } })
+    const updatedRequest = await Requests.findOne(query, {
+      _id: 0,
+      __v: 0,
+      loginCode: 0,
+      password: 0,
+    })
+
+    return res.status(200).json(updatedRequest)
+  } catch (error) {
+    next(error)
+  }
+}
