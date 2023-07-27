@@ -5,6 +5,7 @@ import createHttpError from 'http-errors'
 import { Users } from '../db/models/users.mjs'
 import { Requests } from '../db/models/requests.mjs'
 import { requestTypes } from '../enums/index.mjs'
+import requestStatuses from '../enums/request-statuses.mjs'
 
 export const createRequest = async (req, res, next) => {
   try {
@@ -76,19 +77,11 @@ export const getRequests = async (req, res, next) => {
   }
 }
 
-export const updateRequests = async (req, res, next) => {
+export const declineRequest = async (req, res, next) => {
   try {
     const requestId = req.params.requestId
     const query = { id: requestId }
-    console.log(query)
-    await Requests.updateOne(query, { $set: { status: 'declined' } })
-    const updatedRequest = await Requests.findOne(query, {
-      _id: 0,
-      __v: 0,
-      loginCode: 0,
-      password: 0,
-    })
-
+    const updatedRequest  = await Requests.findOneAndUpdate(query, { status: requestStatuses.DECLINED })
     return res.status(200).json(updatedRequest)
   } catch (error) {
     next(error)
