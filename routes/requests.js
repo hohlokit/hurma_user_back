@@ -1,8 +1,8 @@
 import express from 'express'
 
-import { getRequests, createRequest } from '../controllers/requests.mjs'
-import { verifyToken } from '../mw/verify-token.mjs'
-import route404 from '../mw/route-404.mjs'
+import { getRequests, createRequest } from '../controllers/requests.js'
+import { verifyToken } from '../mw/verify-token.js'
+import route404 from '../mw/route-404.js'
 
 const router = express.Router()
 

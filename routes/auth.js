@@ -1,12 +1,12 @@
 import express from 'express'
 
-import { login, requestCode } from '../controllers/auth.mjs'
-import route404 from '../mw/route-404.mjs'
+import { loginViaCode, requestCode } from '../controllers/auth.js'
+import route404 from '../mw/route-404.js'
 
 const router = express.Router()
 
 router.post('/request-code', requestCode)
-router.post('/login', login)
+router.post('/login', loginViaCode)
 
 router.get('*', route404)
 

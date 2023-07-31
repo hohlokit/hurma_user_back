@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
-import { requestTypes, requestStatuses } from '../../enums/index.mjs'
-import { generateId } from '../../utils/index.mjs'
+import { requestTypes, requestStatuses } from '../../enums/index.js'
+import { generateId } from '../../utils/index.js'
 import { ObjectId } from 'mongodb'
 
 const request = new mongoose.Schema(

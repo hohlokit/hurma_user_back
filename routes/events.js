@@ -5,9 +5,9 @@ import {
   joinEvent,
   getEvent,
   getEvents,
-} from '../controllers/events.mjs'
-import { verifyToken } from '../mw/verify-token.mjs'
-import route404 from '../mw/route-404.mjs'
+} from '../controllers/events.js'
+import { verifyToken } from '../mw/verify-token.js'
+import route404 from '../mw/route-404.js'
 
 const router = express.Router()
 

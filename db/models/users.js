@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
-import { generateId } from '../../utils/index.mjs'
-import userStatuses from '../../enums/user-statuses.mjs'
+import { generateId } from '../../utils/index.js'
+import userStatuses from '../../enums/user-statuses.js'
 
 const user = new mongoose.Schema(
   {

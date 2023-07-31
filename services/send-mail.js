@@ -25,11 +25,11 @@ export default async ({
       hbs({
         viewEngine: {
           extname: '.hbs',
-          layoutsDir: 'src/templates/',
+          layoutsDir: 'templates/',
           defaultLayout: false,
-          partialsDir: 'src/templates/',
+          partialsDir: 'templates/',
         },
-        viewPath: 'src/templates/',
+        viewPath: 'templates/',
         extName: '.hbs',
       })
     )

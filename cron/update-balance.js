@@ -1,5 +1,5 @@
 import cron from 'node-cron'
-import { Users } from '../db/models/users.mjs'
+import { Users } from '../db/models/users.js'
 
 export default () => {
   cron.schedule(
