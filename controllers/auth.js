@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import moment from 'moment'
 
 import sendMail from '../services/send-mail.js'
-import { userStatuses } from '../enums/index.js'
+import { userRoles, userStatuses } from '../enums/index.js'
 import { Users } from '../db/models/users.js'
 import validateEmail from '../utils/validate-email.js'
 
