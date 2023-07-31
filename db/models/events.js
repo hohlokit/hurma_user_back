@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { generateId } from '../../utils/index.mjs'
+import { generateId } from '../../utils/index.js'
 import { ObjectId } from 'mongodb'
 
 const event = new mongoose.Schema(

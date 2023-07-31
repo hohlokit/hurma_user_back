@@ -1,8 +1,8 @@
 import createHttpError from 'http-errors'
 import moment from 'moment'
 
-import { Events } from '../db/models/events.mjs'
-import saveFile from '../utils/save-file.mjs'
+import { Events } from '../db/models/events.js'
+import saveFile from '../utils/save-file.js'
 
 export const createEvent = async (req, res, next) => {
   try {
@@ -78,8 +78,8 @@ export const getEvent = async (req, res, next) => {
     if (!eventId) throw createHttpError(400, 'Event id was not provided')
 
     const event = await Events.findOne({ id: eventId })
-      .populate('members', '-_id id email firstName lastName surname')
-      .populate('creators', '-_id id email firstName lastName surname')
+      .populate('members', 'id email firstName lastName surname')
+      .populate('creators', 'id email firstName lastName surname')
 
     return res.status(200).json(event)
   } catch (error) {
@@ -89,13 +89,22 @@ export const getEvent = async (req, res, next) => {
 
 export const getEvents = async (req, res, next) => {
   try {
-    const { limit = 10, offset = 0, self = 0 } = req.query
+    const {
+      limit = 10,
+      offset = 0,
+      self = 0,
+      name,
+      startDate,
+      endDate,
+    } = req.query
 
     const query = {}
 
-    if (Number(self) === 1) {
+    if (Number(self) === 1)
       query.$or = [{ members: req.user._id }, { creators: req.user._id }]
-    }
+    if (name) query.name = { $regex: name, $options: 'i' }
+    if (startDate) query.startDate = { $gte: startDate }
+    if (endDate) query.endDate = { $lte: endDate }
 
     const count = await Events.countDocuments({
       $or: [{ members: req.user._id }, { creators: req.user._id }],
@@ -105,10 +114,47 @@ export const getEvents = async (req, res, next) => {
       .sort({ createdAt: -1 })
       .skip(limit * offset)
       .limit(limit)
-      .populate('members', '-_id id email firstName lastName')
-      .populate('creators', '-_id id email firstName lastName')
+      .populate('members', 'id email firstName lastName surname avatar')
+      .populate('creators', 'id email firstName lastName surname avatar')
 
     return res.status(200).json({ count, events })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateEvent = async (req, res, next) => {
+  try {
+    const { name, description, startDate, endDate } = req.body
+    const { eventId } = req.params
+
+    if (!name) throw createHttpError(400, 'Event name is missing')
+    if (moment(startDate).isAfter(moment(endDate)))
+      throw createHttpError(400, 'Start date should not be after end date')
+    const upd = { name, description, startDate, endDate }
+    let eventBanner
+    if (req.files) {
+      const { banner } = req.files
+
+      eventBanner = banner
+      if (eventBanner === false) {
+        eventBanner = null
+
+        upd['banner'] = null
+      } else if (eventBanner) {
+        const { filename } = await saveFile({
+          file: banner,
+          savePath: `/banners`,
+          newFilename: req.user.id,
+        })
+
+        upd['banner'] = `/public/banners/${filename}`
+      }
+    }
+
+    const event = await Events.updateOne({ id: eventId }, upd)
+
+    return res.status(200).json(event)
   } catch (error) {
     next(error)
   }
