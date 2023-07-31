@@ -200,13 +200,12 @@ export const getCelebrations = async (req, res, next) => {
         },
       },
     }
-    const filter = { $match: { daysTillBirthday: { $gt: 0 } } }
+    // const filter = { $match: { daysTillBirthday: { $gt: 0 } } }
     const sort = { $sort: { daysTillBirthday: 1 } }
     const limit = { $limit: 5 }
     const celebrations = await Users.aggregate([
       pipe1,
       pipe2,
-      filter,
       sort,
       limit,
     ])
