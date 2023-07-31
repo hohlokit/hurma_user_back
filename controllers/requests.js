@@ -154,3 +154,20 @@ export const updateRequest = async (req, res, next) => {
     next(error)
   }
 }
+
+export const declineRequest = async (req, res, next) => {
+  try {
+    const requestId = req.params.requestId
+    const query = { id: requestId }
+    const updatedRequest = await Requests.findOneAndUpdate(
+      query,
+      { status: requestStatuses.DECLINED },
+      {
+        returnDocument: 'after',
+      }
+    )
+    return res.status(200).json(updatedRequest)
+  } catch (error) {
+    next(error)
+  }
+}
