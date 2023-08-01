@@ -39,16 +39,16 @@ app.use('/api', routes)
 app.use(errorHandler)
 
 if (process.env.NODE_ENV === 'production') {
-app.use(express.static('builds/client'))
-app.use(serveStatic('builds/admin'))
+  app.use(express.static('builds/client'))
+  app.use(serveStatic('builds/admin'))
 
-app.use('/admin*', (_, res) => {
-  res.sendFile(path.resolve(__dirname, 'builds', 'admin', 'index.html'))
-})
+  app.use('/admin*', (_, res) => {
+    res.sendFile(path.resolve(__dirname, 'builds', 'admin', 'index.html'))
+  })
 
-app.use('/*', (_, res) => {
-  res.sendFile(path.resolve(__dirname, 'builds', 'client', 'index.html'))
-})
+  app.use('/*', (_, res) => {
+    res.sendFile(path.resolve(__dirname, 'builds', 'client', 'index.html'))
+  })
 }
 
 console.log(
