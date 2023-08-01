@@ -80,6 +80,7 @@ export const getEvent = async (req, res, next) => {
     const event = await Events.findOne({ id: eventId })
       .populate('members', 'id email firstName lastName surname')
       .populate('creators', 'id email firstName lastName surname')
+      .populate('skip', 'id email firstName lastName surname avatar')
 
     return res.status(200).json(event)
   } catch (error) {
@@ -114,6 +115,7 @@ export const getEvents = async (req, res, next) => {
       .limit(limit)
       .populate('members', 'id email firstName lastName surname avatar')
       .populate('creators', 'id email firstName lastName surname avatar')
+      .populate('skip', 'id email firstName lastName surname avatar')
 
     return res.status(200).json({ count, events })
   } catch (error) {
@@ -126,6 +128,7 @@ export const updateEvent = async (req, res, next) => {
     const { name, description, startDate, endDate } = req.body
     const { eventId } = req.params
 
+    console.log(startDate, endDate);
     if (!name) throw createHttpError(400, 'Event name is missing')
     if (moment(startDate).isAfter(moment(endDate)))
       throw createHttpError(400, 'Start date should not be after end date')

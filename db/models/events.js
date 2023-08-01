@@ -29,6 +29,11 @@ const event = new mongoose.Schema(
       ref: 'Users',
       default: [],
     },
+    skip: {
+      type: [ObjectId],
+      ref: 'Users',
+      default: [],
+    },
     startDate: Date,
     endDate: Date,
   },

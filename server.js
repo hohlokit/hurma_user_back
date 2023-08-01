@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import path from 'path'
 import cors from 'cors'
 import formData from 'express-form-data'
+import serveStatic from 'serve-static'
 
 import { connectDB } from './db/connectDb.js'
 import updateBalance from './cron/update-balance.js'
@@ -37,17 +38,17 @@ app.use('/admin-api', adminRoutes)
 app.use('/api', routes)
 app.use(errorHandler)
 
-app.use(express.static('builds/client/'))
-app.use(express.static('builds/admin/'))
-
 if (process.env.NODE_ENV === 'production') {
-  app.use('/admin/*', (_, res) => {
-    res.sendFile(path.resolve(__dirname, 'builds', 'admin', 'index.html'))
-  })
+app.use(express.static('builds/client'))
+app.use(serveStatic('builds/admin'))
 
-  app.use('*', (_, res) => {
-    res.sendFile(path.resolve(__dirname, 'builds', 'client', 'index.html'))
-  })
+app.use('/admin*', (_, res) => {
+  res.sendFile(path.resolve(__dirname, 'builds', 'admin', 'index.html'))
+})
+
+app.use('/*', (_, res) => {
+  res.sendFile(path.resolve(__dirname, 'builds', 'client', 'index.html'))
+})
 }
 
 console.log(
