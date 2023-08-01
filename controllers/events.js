@@ -106,9 +106,7 @@ export const getEvents = async (req, res, next) => {
     if (startDate) query.startDate = { $gte: startDate }
     if (endDate) query.endDate = { $lte: endDate }
 
-    const count = await Events.countDocuments({
-      $or: [{ members: req.user._id }, { creators: req.user._id }],
-    })
+    const count = await Events.countDocuments(query)
 
     const events = await Events.find(query)
       .sort({ createdAt: -1 })
