@@ -2,7 +2,8 @@ import createHttpError from 'http-errors'
 import moment from 'moment'
 
 import { Events } from '../db/models/events.js'
-import saveFile from '../utils/save-file.js'
+import { saveFile } from '../utils/index.js'
+import { populateUser } from '../db/constants/index.js'
 
 export const createEvent = async (req, res, next) => {
   try {
@@ -18,6 +19,8 @@ export const createEvent = async (req, res, next) => {
 
     const create = { name, description, startDate, endDate }
 
+    let event = await Events.create(create)
+
     let eventBanner
     if (req.files) {
       const { banner } = req.files
@@ -27,14 +30,17 @@ export const createEvent = async (req, res, next) => {
         const { filename } = await saveFile({
           file: banner,
           savePath: `/banners`,
-          newFilename: req.user.id,
+          newFilename: event.id,
         })
 
-        create['banner'] = `/public/banners/${filename}`
+        event = await Events.findOneAndUpdate(
+          { id: event.id },
+          { banner: `/public/banners/${filename}` },
+          { returnDocument: 'after' }
+        )
       }
     }
 
-    const event = await Events.create(create)
     return res.status(200).json(event)
   } catch (error) {
     next(error)
@@ -78,9 +84,9 @@ export const getEvent = async (req, res, next) => {
     if (!eventId) throw createHttpError(400, 'Event id was not provided')
 
     const event = await Events.findOne({ id: eventId })
-      .populate('members', 'id email firstName lastName surname')
-      .populate('creators', 'id email firstName lastName surname')
-      .populate('skip', 'id email firstName lastName surname avatar')
+      .populate('members', populateUser)
+      .populate('creators', populateUser)
+      .populate('skip', populateUser)
 
     return res.status(200).json(event)
   } catch (error) {
@@ -113,9 +119,9 @@ export const getEvents = async (req, res, next) => {
       .sort({ createdAt: -1 })
       .skip(limit * offset)
       .limit(limit)
-      .populate('members', 'id email firstName lastName surname avatar')
-      .populate('creators', 'id email firstName lastName surname avatar')
-      .populate('skip', 'id email firstName lastName surname avatar')
+      .populate('members', populateUser)
+      .populate('creators', populateUser)
+      .populate('skip', populateUser)
 
     return res.status(200).json({ count, events })
   } catch (error) {
@@ -128,7 +134,6 @@ export const updateEvent = async (req, res, next) => {
     const { name, description, startDate, endDate } = req.body
     const { eventId } = req.params
 
-    console.log(startDate, endDate);
     if (!name) throw createHttpError(400, 'Event name is missing')
     if (moment(startDate).isAfter(moment(endDate)))
       throw createHttpError(400, 'Start date should not be after end date')
@@ -146,14 +151,16 @@ export const updateEvent = async (req, res, next) => {
         const { filename } = await saveFile({
           file: banner,
           savePath: `/banners`,
-          newFilename: req.user.id,
+          newFilename: eventId,
         })
 
         upd['banner'] = `/public/banners/${filename}`
       }
     }
 
-    const event = await Events.updateOne({ id: eventId }, upd)
+    const event = await Events.findOneAndUpdate({ id: eventId }, upd, {
+      returnDocument: 'after',
+    })
 
     return res.status(200).json(event)
   } catch (error) {

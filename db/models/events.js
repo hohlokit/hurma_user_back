@@ -17,7 +17,7 @@ const event = new mongoose.Schema(
       type: String,
     },
     description: {
-      type: {},
+      type: String,
     },
     creators: {
       type: [ObjectId],
