@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors'
 import moment from 'moment'
+import { ObjectId } from 'mongodb'
 
 import { Events } from '../db/models/events.js'
 import { saveFile } from '../utils/index.js'
@@ -66,10 +67,10 @@ export const skipEvent = async (req, res, next) => {
       { id: eventId },
       {
         $pull: {
-          members: req.user._id,
+          members: new ObjectId(req.user._id),
         },
         $push: {
-          skip: req.user._id,
+          skip: new ObjectId(req.user._id),
         },
       },
       {
@@ -99,10 +100,10 @@ export const joinEvent = async (req, res, next) => {
       { id: eventId },
       {
         $pull: {
-          skip: req.user._id,
+          skip: new ObjectId(req.user._id),
         },
         members: {
-          $push: req.user._id,
+          $push: new ObjectId(req.user._id),
         },
       },
       {
