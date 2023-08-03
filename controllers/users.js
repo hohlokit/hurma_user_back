@@ -81,6 +81,9 @@ export const createUser = async (req, res, next) => {
     if (!surname) throw createHttpError(400, 'Surname is missing')
 
     const create = { email, firstName, lastName, surname, phone, birthday }
+
+    let user = await Users.create(create)
+
     let avatarData
     if (req.files) {
       const { avatar } = req.files
@@ -91,14 +94,16 @@ export const createUser = async (req, res, next) => {
         const { filename } = await saveFile({
           file: avatar,
           savePath: `/avatars`,
-          newFilename: req.user.id,
+          newFilename: user.id,
         })
 
-        create['avatar'] = `/public/avatars/${filename}`
+        user = await Users.findOneAndUpdate(
+          { id: user.id },
+          { avatar: `/public/avatars/${filename}` },
+          { returnDocument: 'after' }
+        )
       }
     }
-
-    const user = await Users.create(create)
 
     return res.status(200).json(user)
   } catch (error) {
@@ -238,7 +243,7 @@ export const updateUser = async (req, res, next) => {
         const { filename } = await saveFile({
           file: avatar,
           savePath: `/avatars`,
-          newFilename: req.user.id,
+          newFilename: userId,
         })
 
         upd['avatar'] = `/public/avatars/${filename}`
