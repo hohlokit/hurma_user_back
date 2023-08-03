@@ -17,7 +17,13 @@ export const createEvent = async (req, res, next) => {
     if (moment(startDate).isBefore(moment))
       throw createHttpError(400, 'Start date should be in future')
 
-    const create = { name, description, startDate, endDate }
+    const create = {
+      name,
+      description,
+      startDate,
+      endDate,
+      creators: [req.user._id],
+    }
 
     let event = await Events.create(create)
 
@@ -47,6 +53,36 @@ export const createEvent = async (req, res, next) => {
   }
 }
 
+export const skipEvent = async (req, res, next) => {
+  try {
+    const { eventId } = req.params
+    const event = await Events.findOne({ id: eventId })
+    if (!event) throw createHttpError(400, 'Cannot find event with provided id')
+
+    if (event.skip.includes(req.user._id))
+      throw createHttpError(400, 'You already skipping this event')
+
+    const upd = await Events.findOneAndUpdate(
+      { id: eventId },
+      {
+        $pull: {
+          members: req.user._id,
+        },
+        $push: {
+          skip: req.user._id,
+        },
+      },
+      {
+        returnDocument: 'after',
+      }
+    )
+
+    return res.status(200).json(upd)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const joinEvent = async (req, res, next) => {
   try {
     const { eventId } = req.params
@@ -62,8 +98,11 @@ export const joinEvent = async (req, res, next) => {
     const upd = await Events.findOneAndUpdate(
       { id: eventId },
       {
-        $push: {
-          members: req.user._id,
+        $pull: {
+          skip: req.user._id,
+        },
+        members: {
+          $push: req.user._id,
         },
       },
       {

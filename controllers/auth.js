@@ -42,7 +42,7 @@ export const loginViaCode = async (req, res, next) => {
     const { email, loginCode } = req.body
     if (!loginCode) throw createHttpError(400, 'Login code is missing')
 
-    const user = await Users.findOne({ email, loginCode }, '-__v -loginCode')
+    let user = await Users.findOne({ email, loginCode }, '-__v -loginCode')
     if (!user)
       throw createHttpError(
         403,
@@ -52,14 +52,13 @@ export const loginViaCode = async (req, res, next) => {
       throw createHttpError(403, 'User disabled. Contact admin for more info')
 
     if (user) {
-      await Users.findOneAndUpdate(
+      user = await Users.findOneAndUpdate(
         { email, loginCode },
         { loginCode: null },
         {
           returnDocument: 'after',
           projection: {
             __v: 0,
-            _id: 0,
             loginCode: 0,
             password: 0,
           },
@@ -79,6 +78,7 @@ export const loginViaCode = async (req, res, next) => {
         process.env.SECRET
       )
 
+      delete user['_id']
       return res.status(200).json({
         accessToken,
         user,
@@ -95,7 +95,7 @@ export const loginViaPassowrd = async (req, res, next) => {
 
     const user = await Users.findOne(
       { email, role: userRoles.ADMIN, status: userStatuses.ACTIVE },
-      { _id: 0, __v: 0, loginCode: 0 }
+      { __v: 0, loginCode: 0 }
     ).lean()
 
     if (!user)
@@ -109,10 +109,10 @@ export const loginViaPassowrd = async (req, res, next) => {
 
       if (!result) throw createHttpError(403, 'Invalid email password pair')
     }
-    const { id, role, status } = user
+    const { _id, id, role, status } = user
 
     const accessToken = jwt.sign(
-      { status, email, id, role },
+      { status, email, id, role, _id },
       process.env.SECRET
     )
 
