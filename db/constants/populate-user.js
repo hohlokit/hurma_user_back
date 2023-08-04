@@ -1,1 +1,1 @@
-export default '-_id -__v id email firstName lastName surname avatar'
+export default '-_id id email firstName lastName surname avatar'
