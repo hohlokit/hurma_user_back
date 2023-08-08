@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { generateId } from '../../utils/index.js'
 import userStatuses from '../../enums/user-statuses.js'
+import userRoles from '../../enums/user-roles.js'
 
 const user = new mongoose.Schema(
   {
@@ -27,6 +28,10 @@ const user = new mongoose.Schema(
     lastName: { type: String, required: true },
     surname: {
       type: String,
+    },
+    role: {
+      type: String,
+      default: userRoles.USER,
     },
     phone: String,
     birthday: {

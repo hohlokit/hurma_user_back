@@ -225,7 +225,8 @@ export const getCelebrations = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   try {
     const { userId } = req.params
-    const { firstName, lastName, surname, email, phone, birthday } = req.body
+    const { firstName, lastName, surname, email, phone, birthday, avatar } =
+      req.body
     const user = await Users.findOne({ id: userId })
     if (!user) throw createHttpError(400, 'Cannot find user with provided id')
 
