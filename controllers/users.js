@@ -9,6 +9,7 @@ import { saveFile } from '../utils/index.js'
 
 export const getSelf = async (req, res, next) => {
   try {
+    console.log('USERS_SELF', req.user)
     const { id } = req.user
     const user = await Users.findOne(
       { id },
