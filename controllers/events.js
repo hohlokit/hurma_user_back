@@ -173,7 +173,6 @@ export const updateEvent = async (req, res, next) => {
     const { name, description, startDate, endDate } = req.body
     const { eventId } = req.params
 
-    if (!name) throw createHttpError(400, 'Event name is missing')
     if (moment(startDate).isAfter(moment(endDate)))
       throw createHttpError(400, 'Start date should not be after end date')
     const upd = { name, description, startDate, endDate }
