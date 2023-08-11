@@ -170,18 +170,19 @@ export const getEvents = async (req, res, next) => {
 
 export const updateEvent = async (req, res, next) => {
   try {
-    const { name, description, startDate, endDate } = req.body
+    const { name, description, startDate, endDate, banner } = req.body
     const { eventId } = req.params
-
     if (moment(startDate).isAfter(moment(endDate)))
       throw createHttpError(400, 'Start date should not be after end date')
     const upd = { name, description, startDate, endDate }
+    if (banner === '') upd['banner'] = null
+
     let eventBanner
     if (req.files) {
       const { banner } = req.files
 
       eventBanner = banner
-      if (eventBanner === false) {
+      if (eventBanner === '') {
         eventBanner = null
 
         upd['banner'] = null

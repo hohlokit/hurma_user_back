@@ -232,7 +232,8 @@ export const updateUser = async (req, res, next) => {
     if (!user) throw createHttpError(400, 'Cannot find user with provided id')
 
     const upd = { email, firstName, lastName, surname, phone, birthday }
-    if (avatar === false) upd['avatar'] = null
+    if (avatar === '') upd['avatar'] = null
+
     let avatarData
     if (req.files) {
       const { avatar } = req.files
